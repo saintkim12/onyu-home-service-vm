@@ -1,0 +1,27 @@
+#
+# WARNING: To install Immich, follow our guide: https://immich.app/docs/install/docker-compose
+#
+# Make sure to use the docker-compose.yml of the current release:
+#
+# https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
+#
+# The compose file on main may not be compatible with the latest release.
+
+name: immich-kiosk
+
+services:
+  immich-kiosk:
+    image: ghcr.io/damongolding/immich-kiosk:latest
+    container_name: immich_kiosk
+    tty: true
+    env_file: ../../stack.env
+    # environment:
+      # KIOSK_IMMICH_API_KEY: '${IMMICH_KIOSK_IMMICH_API_KEY}'
+      # KIOSK_IMMICH_URL: '${IMMICH_KIOSK_IMMICH_URL}'
+    ports:
+      - '${IMMICH_KIOSK_PORT}:3000'
+    # volumes:
+      # - ./config:/config
+      # - ./custom.css:/custom.css
+      # - ./offline-assets:/offline-assets
+    restart: always

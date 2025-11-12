@@ -1,0 +1,7 @@
+services:
+  pairdrop:
+    image: 'lscr.io/linuxserver/pairdrop:latest'
+    container_name: pairdrop
+    restart: unless-stopped
+    ports:
+      - '${PAIRDROP_PORT:-3000}:3000' # Web UI

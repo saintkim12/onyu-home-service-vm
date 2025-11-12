@@ -1,0 +1,12 @@
+services:
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    ports:
+      - '${PORTAINER_PORT:-9000}:9000'
+    # environment:
+      # - ADMIN_PASS=${PORTAINER_ADMIN_PASS}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/data/portainer:/data
+    restart: always
