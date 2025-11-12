@@ -11,7 +11,7 @@ services:
       retries: 5
       timeout: 5s
     volumes:
-      - /opt/data/authentik-db:/var/lib/postgresql/data
+      - /opt/data/authentik/db:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${PG_PASS:?database password required}
       POSTGRES_USER: ${PG_USER:-authentik}
@@ -40,8 +40,8 @@ services:
       AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
     volumes:
-      - ./media:/media
-      - ./custom-templates:/templates
+      - /opt/data/authentik/media:/media
+      - /opt/data/authentik/custom-templates:/templates
     ports:
       - '${COMPOSE_PORT_HTTP:-9000}:9000'
       - '${COMPOSE_PORT_HTTPS:-9443}:9443'
@@ -70,9 +70,9 @@ services:
     user: root
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./media:/media
-      - ./certs:/certs
-      - ./custom-templates:/templates
+      - /opt/data/authentik/media:/media
+      - /opt/data/authentik/certs:/certs
+      - /opt/data/authentik/custom-templates:/templates
     depends_on:
       postgresql:
         condition: service_healthy
