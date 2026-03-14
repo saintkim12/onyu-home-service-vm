@@ -3,7 +3,7 @@ set -e
 
 GIT_USER=saintkim12
 GIT_REPO=onyu-home-service-vm
-GIT_BRANCH=main
+GIT_BRANCH=deploy
 GIT_URL=https://github.com/${GIT_USER}/${GIT_REPO}.git
 SERVICE_VM_DIR=/opt/setup/service-vm
 YOUR_SERVER_IP='<your-server-ip>'
