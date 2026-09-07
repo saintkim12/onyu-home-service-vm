@@ -9,7 +9,7 @@ services:
       - /opt/data/ntfy:/var/lib/ntfy
 
     ports:
-      - "${NTFY_PORT}:2586"
+      - "${NTFY_PORT}:80"
 
     restart: unless-stopped
 
@@ -19,7 +19,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "wget -q --tries=1 http://localhost:2586/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1",
+          "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1",
         ]
       interval: 60s
       timeout: 10s
