@@ -1,0 +1,17 @@
+# ~/.config/rclone/rclone.conf 
+# see http://192.168.1.15:9001/access-keys
+[lanraragi-s3]
+type = s3
+provider = Minio
+access_key_id = minioadmin
+secret_access_key = minioadmin
+endpoint = http://192.168.1.100:9000
+acl = private
+
+# [pinchflat-s3]
+# type = s3
+# provider = Minio
+# access_key_id = minioadmin
+# secret_access_key = minioadmin
+# endpoint = http://192.168.1.100:9000
+# acl = private

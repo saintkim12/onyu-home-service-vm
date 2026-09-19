@@ -15,7 +15,7 @@ cd /opt/setup
 echo "📦 Installing Docker..."
 apk update
 # apk add --no-cache docker docker-compose git curl openrc rsync rclone fuse3
-apk add --no-cache docker docker-compose git curl openrc rsync
+apk add --no-cache docker docker-compose git curl openrc rclone fuse3
 
 ### [2] rclone 초기화
 # echo fuse >> /etc/modules # fuse 등록: modprobe fuse
@@ -39,10 +39,10 @@ fi
 cd "$SERVICE_VM_DIR"
 
 ### [6] rclone 서비스 등록
-# cp rclone.conf ~/.config/rclone/rclone.conf # rclone.conf 파일 변경 필요!(key)
-# cp rclone.start /etc/local.d/rclone.start
-# chmod +x /etc/local.d/rclone.start
-# rc-update add local
+cp rclone.conf ~/.config/rclone/rclone.conf # rclone.conf 파일 변경 필요!(key)
+cp rclone.start /etc/local.d/rclone.start
+chmod +x /etc/local.d/rclone.start
+rc-update add local
 
 ### [7] Portainer Docker 컨테이너 실행
 echo "🚀 Starting Portainer..."

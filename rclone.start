@@ -1,0 +1,18 @@
+mkdir -p /mnt/lanraragi-s3
+rclone mount lanraragi-s3:lanraragi /mnt/lanraragi-s3 \
+  --vfs-cache-mode=full \
+  --cache-dir=/mnt/rclone-cache \
+  --vfs-cache-max-size 4G \
+  --vfs-cache-max-age 4h \
+  --vfs-cache-poll-interval 10m \
+  --dir-cache-time=6h \
+  --poll-interval=15s \
+  --allow-other \
+  --umask=002 \
+  --buffer-size=64M \
+  --attr-timeout=30s \
+  --log-level INFO \
+  --log-file /var/log/rclone-lanraragi.log \
+  --rc \
+  --rc-addr=127.0.0.1:5572 \
+  --rc-no-auth &
