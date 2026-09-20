@@ -47,7 +47,7 @@ services:
       - "${LANRARAGI_PORT}:80"
 
     volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - /opt/localdata/lanraragi/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - /opt/localdata/lanraragi/caddy/data:/data
       - /opt/localdata/lanraragi/caddy/config:/config
 
