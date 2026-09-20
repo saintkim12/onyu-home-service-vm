@@ -1,123 +1,62 @@
 services:
   # ============================================================
   # LANraragi
-  # 현재 활성화되는 유일한 서비스
   # ============================================================
   lanraragi:
-    # 현재 latest와 동일한 안정 버전으로 고정
     image: difegue/lanraragi:v.0.9.81
     container_name: lanraragi
 
-    ports:
-      # 현재는 iPad 호환성 검증 단계이므로 LAN에 직접 노출
-      #
-      # 추후 SWAG + Authelia 적용 시 이 ports 항목은 제거할 것.
-      # 그렇지 않으면 :3000으로 인증을 우회할 수 있음.
-      - "${LANRARAGI_PORT}:3000"
+    # 직접 포트 공개하지 않음.
+    # Caddy를 통해서만 접근.
+    expose:
+      - "3000"
 
     environment:
-      # rclone/FUSE 원격 저장소에 대해 LANraragi가
-      # 시작 시 chmod/chown 등을 시도하지 않도록 함.
-      #
-      # 이것은 read-only 설정이 아님.
-      # rclone mount 자체가 RW이면 LANraragi도 업로드/삭제 가능.
       - LRR_AUTOFIX_PERMISSIONS=-1
-
-      # 기본 컨테이너 사용자는 UID/GID 9001.
-      # 권한 문제가 실제 발생할 경우에만 아래 값을 조정.
-      #
       - LRR_UID=${PUID}
       - LRR_GID=${PGID}
 
     volumes:
-      # --------------------------------------------------------
-      # 이미지 ZIP/CBZ 원본
-      #
-      # MinIO
-      #   → rclone mount
-      #   → /mnt/lanraragi-s3
-      #   → LANraragi content
-      #
-      # RW 마운트:
-      # LANraragi에서 업로드/삭제하는 내용도 MinIO에 반영됨.
-      # --------------------------------------------------------
+      # MinIO -> rclone
       - /mnt/lanraragi-s3:/home/koyomi/lanraragi/content
 
-      # LANraragi 자체 데이터는 홈서버 로컬 유지
+      # 로컬 영구 데이터
       - /opt/localdata/lanraragi/thumb:/home/koyomi/lanraragi/thumb
       - /opt/localdata/lanraragi/database:/home/koyomi/lanraragi/database
 
     restart: unless-stopped
 
-    # networks:
-    #   - lanraragi_net
+    networks:
+      - lanraragi_net
 
 
   # ============================================================
-  # 추후 사용: Authelia
+  # Caddy
   #
-  # 용도:
-  # - 허용된 iPad/IP → 인증 bypass
-  # - 다른 허용 사용자 → 로그인
-  # - 나머지 → deny
-  #
-  # 현재는 완전히 주석 처리되어 실행되지 않음.
+  # 유일한 외부 진입점.
+  # Basic Auth 후 LANraragi로 reverse proxy.
   # ============================================================
+  caddy:
+    image: caddy:2-alpine
+    container_name: lanraragi-caddy
 
-  # authelia:
-  #   image: docker.io/authelia/authelia:latest
-  #   container_name: authelia
-  #
-  #   volumes:
-  #     - ./authelia/config:/config
-  #     - ./authelia/secrets:/secrets:ro
-  #
-  #   restart: unless-stopped
-  #
-  #   networks:
-  #     - lanraragi_net
+    depends_on:
+      - lanraragi
 
+    ports:
+      - "${LANRARAGI_PORT}:80"
 
-  # ============================================================
-  # 추후 사용: SWAG
-  #
-  # Browser
-  #   ↓
-  # SWAG
-  #   ↓
-  # Authelia
-  #   ↓
-  # LANraragi
-  #
-  # 도메인/HTTPS 구성은 실제 인증 적용 시 결정.
-  # ============================================================
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - /opt/localdata/lanraragi/caddy/data:/data
+      - /opt/localdata/lanraragi/caddy/config:/config
 
-  # swag:
-  #   image: lscr.io/linuxserver/swag:latest
-  #   container_name: swag
-  #
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Asia/Seoul
-  #
-  #     # 실제 적용할 때 설정
-  #     # - URL=example.internal
-  #     # - VALIDATION=...
-  #
-  #   volumes:
-  #     - ./swag/config:/config
-  #
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #
-  #   restart: unless-stopped
-  #
-  #   networks:
-  #     - lanraragi_net
+    restart: unless-stopped
+
+    networks:
+      - lanraragi_net
 
 
-# networks:
-#   lanraragi_net:
-#     driver: bridge
+networks:
+  lanraragi_net:
+    driver: bridge

@@ -1,0 +1,7 @@
+:80 {
+    basic_auth {
+        lrr $2a$14$RVFdz4mgEkJesi5eC//twOa3SfHb1jR0MvgQBU2xoSu8pBGg7c2gW
+    }
+
+    reverse_proxy lanraragi:3000
+}
